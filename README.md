@@ -1,0 +1,2 @@
+# Document_summary_app
+英語のドキュメント翻訳アプリの作成
