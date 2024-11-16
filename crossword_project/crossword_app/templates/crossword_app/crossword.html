@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>クロスワードパズル</title>
+</head>
+<body>
+    <h1>クロスワードパズル</h1>
+
+    {% if error_message %}
+        <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+
+    <h2>横のカギ</h2>
+    <ul>
+        {% for clue in across_clues %}
+            <li>{{ clue.number }}. {{ clue.clue }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>縦のカギ</h2>
+    <ul>
+        {% for clue in down_clues %}
+            <li>{{ clue.number }}. {{ clue.clue }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post" action="{% url 'validate_answer' %}">
+        {% csrf_token %}
+        <label for="final_answer">最終回答を入力してください：</label><br>
+        <input type="text" id="final_answer" name="final_answer"><br><br>
+        <input type="submit" value="送信">
+    </form>
+</body>
+</html>
