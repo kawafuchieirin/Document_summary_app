@@ -1,37 +1,31 @@
-# crossword_app/views.py
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from .models import AcrossClue, DownClue
+from django.shortcuts import render, redirect, reverse
 
 def crossword_view(request):
-    across_clues = AcrossClue.objects.all()
-    down_clues = DownClue.objects.all()
-    error_message = request.GET.get('error', None)
-
-    # グリッド構造
-    grid_structure = [
-        [1, 2, 3, 4],
-        [0, 5, 1, 1],
-        [6, 7, 1, 8],
-        [9, 10, 0, 1],
-        [11, 1, 1, 1],
+    crossword_data = [
+        ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+        ["#", "c", "l", "o", "u", "d", "f", "r", "o", "n", "t", "#", "p"],
+        ["#", "d", "#", "p", "#", "o", "#", "#", "#", "#", "#", "#", "r"],
+        ["#", "k", "#", "e", "#", "c", "#", "#", "#", "#", "#", "#", "o"],
+        ["#", "#", "#", "n", "q", "u", "i", "c", "k", "s", "i", "h", "t"],
+        ["#", "#", "s", "#", "m", "#", "#", "#", "#", "#", "#", "#", "o"],
+        ["#", "#", "e", "#", "e", "#", "#", "#", "#", "#", "c", "f", "n"],
+        ["#", "#", "r", "#", "n", "#", "#", "#", "#", "#", "#", "#", "#"],
+        ["v", "p", "c", "#", "t", "#", "#", "w", "#", "#", "#", "#", "#"],
+        ["#", "#", "h", "#", "d", "y", "n", "a", "m", "o", "d", "b", "#"],
+        ["#", "#", "#", "#", "b", "#", "#", "f", "#", "#", "#", "#", "#"]
     ]
-
-    return render(request, 'crossword_app/crossword.html', {
-        'across_clues': across_clues,
-        'down_clues': down_clues,
-        'error_message': error_message,
-        'grid_structure': grid_structure,
-    })
+    
+    return render(request, 'crossword_app/crossword.html', {'crossword_data': crossword_data})
 
 def validate_answer(request):
     if request.method == 'POST':
-        answer = "".join([request.POST.get(f'answer{i}', '') for i in range(1, 5)])
-        if answer.lower() == 'thank':
-            return redirect('success')
+        # ユーザーの回答を取得して処理する（例として 'cloudfront' と比較）
+        answer = "".join([request.POST.get(f'answer{i}', '').lower() for i in range(1, 10)])
+        if answer == 'cloudfront':  # 正解の回答と比較
+            return redirect('success')  # 正解の場合は成功ページへリダイレクト
         else:
-            return redirect(reverse('crossword_puzzle') + '?error=Incorrect answer')
-    return redirect('crossword_puzzle')
+            return redirect(reverse('crossword') + '?error=Incorrect answer')  # 不正解の場合はエラーメッセージを表示
+    return redirect('crossword')
 
 def success_view(request):
     return render(request, 'crossword_app/success.html')
