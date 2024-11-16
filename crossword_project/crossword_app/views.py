@@ -1,34 +1,37 @@
+# crossword_app/views.py
 from django.shortcuts import render, redirect
-from .models import Clue
+from django.urls import reverse
+from .models import AcrossClue, DownClue
 
 def crossword_view(request):
-    across_clues = Clue.objects.filter(direction='ACROSS').order_by('number')
-    down_clues = Clue.objects.filter(direction='DOWN').order_by('number')
-    context = {
+    across_clues = AcrossClue.objects.all()
+    down_clues = DownClue.objects.all()
+    error_message = request.GET.get('error', None)
+
+    # グリッド構造
+    grid_structure = [
+        [1, 2, 3, 4],
+        [0, 5, 1, 1],
+        [6, 7, 1, 8],
+        [9, 10, 0, 1],
+        [11, 1, 1, 1],
+    ]
+
+    return render(request, 'crossword_app/crossword.html', {
         'across_clues': across_clues,
         'down_clues': down_clues,
-    }
-    return render(request, 'crossword_app/crossword.html', context)
+        'error_message': error_message,
+        'grid_structure': grid_structure,
+    })
 
 def validate_answer(request):
     if request.method == 'POST':
-        final_answer = request.POST.get('final_answer')
-        if final_answer.strip().lower() == 'thank you':
-            # 正解の場合、次のURLにリダイレクト
+        answer = "".join([request.POST.get(f'answer{i}', '') for i in range(1, 5)])
+        if answer.lower() == 'thank':
             return redirect('success')
         else:
-            # 不正解の場合、エラーメッセージを表示
-            error_message = '回答が不適切です。'
-            across_clues = Clue.objects.filter(direction='ACROSS').order_by('number')
-            down_clues = Clue.objects.filter(direction='DOWN').order_by('number')
-            context = {
-                'across_clues': across_clues,
-                'down_clues': down_clues,
-                'error_message': error_message,
-            }
-            return render(request, 'crossword_app/crossword.html', context)
-    else:
-        return redirect('crossword')
+            return redirect(reverse('crossword_puzzle') + '?error=Incorrect answer')
+    return redirect('crossword_puzzle')
 
 def success_view(request):
     return render(request, 'crossword_app/success.html')
