@@ -6,7 +6,7 @@ class Clue(models.Model):
         ('DOWN', '縦のカギ'),
     )
     number = models.IntegerField()
-    direction = models.CharField(max_length=6, choices=DIRECTION_CHOICES)
+    direction = models.CharField(max_length=6, choices=DIRECTION_CHOICES)  # 修正箇所: max_length=6 に変更
     clue = models.TextField()
     answer = models.CharField(max_length=50)
 

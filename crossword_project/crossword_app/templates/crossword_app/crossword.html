@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>クロスワードパズル</title>
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
 </head>
 <body>
     <h1>クロスワードパズル</h1>
 
     {% if error_message %}
-        <p style="color:red;">{{ error_message }}</p>
+        <script>
+            showAlert("{{ error_message }}");
+        </script>
     {% endif %}
 
     <h2>横のカギ</h2>
@@ -28,7 +35,7 @@
     <form method="post" action="{% url 'validate_answer' %}">
         {% csrf_token %}
         <label for="final_answer">最終回答を入力してください：</label><br>
-        <input type="text" id="final_answer" name="final_answer"><br><br>
+        <input type="text" id="final_answer" name="final_answer" required><br><br>
         <input type="submit" value="送信">
     </form>
 </body>

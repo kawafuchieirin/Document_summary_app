@@ -14,9 +14,11 @@ def validate_answer(request):
     if request.method == 'POST':
         final_answer = request.POST.get('final_answer')
         if final_answer.strip().lower() == 'thank you':
+            # 正解の場合、次のURLにリダイレクト
             return redirect('success')
         else:
-            error_message = '回答が正しくありません。もう一度お試しください。'
+            # 不正解の場合、エラーメッセージを表示
+            error_message = '回答が不適切です。'
             across_clues = Clue.objects.filter(direction='ACROSS').order_by('number')
             down_clues = Clue.objects.filter(direction='DOWN').order_by('number')
             context = {
