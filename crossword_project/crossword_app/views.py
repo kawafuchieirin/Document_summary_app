@@ -1,32 +1,31 @@
-from django.shortcuts import render, redirect
-from .models import Clue
+from django.shortcuts import render, redirect, reverse
 
 def crossword_view(request):
-    across_clues = Clue.objects.filter(direction='ACROSS').order_by('number')
-    down_clues = Clue.objects.filter(direction='DOWN').order_by('number')
-    context = {
-        'across_clues': across_clues,
-        'down_clues': down_clues,
-    }
-    return render(request, 'crossword_app/crossword.html', context)
+    crossword_data = [
+        ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+        ["#", "c", "l", "o", "u", "d", "f", "r", "o", "n", "t", "#", "p"],
+        ["#", "d", "#", "p", "#", "o", "#", "#", "#", "#", "#", "#", "r"],
+        ["#", "k", "#", "e", "#", "c", "#", "#", "#", "#", "#", "#", "o"],
+        ["#", "#", "#", "n", "q", "u", "i", "c", "k", "s", "i", "h", "t"],
+        ["#", "#", "s", "#", "m", "#", "#", "#", "#", "#", "#", "#", "o"],
+        ["#", "#", "e", "#", "e", "#", "#", "#", "#", "#", "c", "f", "n"],
+        ["#", "#", "r", "#", "n", "#", "#", "#", "#", "#", "#", "#", "#"],
+        ["v", "p", "c", "#", "t", "#", "#", "w", "#", "#", "#", "#", "#"],
+        ["#", "#", "h", "#", "d", "y", "n", "a", "m", "o", "d", "b", "#"],
+        ["#", "#", "#", "#", "b", "#", "#", "f", "#", "#", "#", "#", "#"]
+    ]
+    
+    return render(request, 'crossword_app/crossword.html', {'crossword_data': crossword_data})
 
 def validate_answer(request):
     if request.method == 'POST':
-        final_answer = request.POST.get('final_answer')
-        if final_answer.strip().lower() == 'thank you':
-            return redirect('success')
+        # ユーザーの回答を取得して処理する（例として 'cloudfront' と比較）
+        answer = "".join([request.POST.get(f'answer{i}', '').lower() for i in range(1, 10)])
+        if answer == 'cloudfront':  # 正解の回答と比較
+            return redirect('success')  # 正解の場合は成功ページへリダイレクト
         else:
-            error_message = '回答が正しくありません。もう一度お試しください。'
-            across_clues = Clue.objects.filter(direction='ACROSS').order_by('number')
-            down_clues = Clue.objects.filter(direction='DOWN').order_by('number')
-            context = {
-                'across_clues': across_clues,
-                'down_clues': down_clues,
-                'error_message': error_message,
-            }
-            return render(request, 'crossword_app/crossword.html', context)
-    else:
-        return redirect('crossword')
+            return redirect(reverse('crossword') + '?error=Incorrect answer')  # 不正解の場合はエラーメッセージを表示
+    return redirect('crossword')
 
 def success_view(request):
     return render(request, 'crossword_app/success.html')

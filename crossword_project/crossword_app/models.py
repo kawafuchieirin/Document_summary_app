@@ -1,14 +1,14 @@
+# crossword_app/models.py
 from django.db import models
 
-class Clue(models.Model):
-    DIRECTION_CHOICES = (
-        ('ACROSS', '横のカギ'),
-        ('DOWN', '縦のカギ'),
-    )
-    number = models.IntegerField()
-    direction = models.CharField(max_length=6, choices=DIRECTION_CHOICES)
-    clue = models.TextField()
-    answer = models.CharField(max_length=50)
+class AcrossClue(models.Model):
+    clue_text = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.number} {self.get_direction_display()}: {self.clue}"
+        return self.clue_text
+
+class DownClue(models.Model):
+    clue_text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.clue_text
